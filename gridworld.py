@@ -303,6 +303,28 @@ def getBookGrid():
             ['S',' ',' ',' ']]
     return Gridworld(grid)
 
+def getLargeSquareRingGrid(l=30, w=30, w2=5):
+    grid = [] 
+    for i in range(l):
+        row = []
+        if i < w2 or i > l - w2:
+            row.extend([' '] * w)
+        else:
+            if i == l/2:
+                row = ['S']
+                row.extend([' '] * (w2 - 1))
+                # assume w > 2 * w2
+                row.extend(['#'] * (w - 2 * w2))
+                row.extend([' '] * (w2 - 1))
+                row.append(100)
+            else:
+                row.extend([' '] * (w2))
+                # assume w > 2 * w2
+                row.extend(['#'] * (w - 2 * w2))
+                row.extend([' '] * (w2))
+        grid.append(row)
+    return Gridworld(grid)
+
 def getMazeGrid():
     grid = [[' ',' ',' ',+1],
             ['#','#',' ','#'],
