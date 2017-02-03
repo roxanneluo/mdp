@@ -98,7 +98,7 @@ def drawNullValues(gridworld, currentState = None, message = ''):
             else:
                 drawNullSquare(gridworld.grid, x, y, False, isExit, isCurrent)
     pos = to_screen(((grid.width - 1.0) / 2.0, - 0.8))
-    text( pos, TEXT_COLOR, message, "Courier", -32, "bold", "c")
+    text( pos, TEXT_COLOR, message, "Courier", -16, "bold", "c")
 
 
 def drawValues(gridworld, values, policy, currentState = None, message = 'State Values'):
@@ -126,7 +126,7 @@ def drawValues(gridworld, values, policy, currentState = None, message = 'State 
                 valString = '%.2f' % value
                 drawSquare(x, y, value, minValue, maxValue, valString, action, False, isExit, isCurrent)
     pos = to_screen(((grid.width - 1.0) / 2.0, - 0.8))
-    text( pos, TEXT_COLOR, message, "Courier", -32, "bold", "c")
+    text( pos, TEXT_COLOR, message, "Courier", -16, "bold", "c")
 
 def drawQValues(gridworld, qValues, currentState = None, message = 'State-Action Q-Values'):
     grid = gridworld.grid
@@ -164,7 +164,7 @@ def drawQValues(gridworld, qValues, currentState = None, message = 'State-Action
             else:
                 drawSquareQ(x, y, q, minValue, maxValue, valStrings, actions, isCurrent)
     pos = to_screen(((grid.width - 1.0) / 2.0, - 0.8))
-    text( pos, TEXT_COLOR, message, "Courier", -32, "bold", "c")
+    text( pos, TEXT_COLOR, message, "Courier", -16, "bold", "c")
 
 
 def blank():
@@ -199,7 +199,7 @@ def drawNullSquare(grid,x, y, isObstacle, isTerminal, isCurrent):
         text( (screen_x, screen_y),
                TEXT_COLOR,
                str(grid[x][y]),
-               "Courier", -24, "bold", "c")
+               "Courier", -12, "bold", "c")
 
 
     text_color = TEXT_COLOR
@@ -252,7 +252,7 @@ def drawSquare(x, y, val, min, max, valStr, action, isObstacle, isTerminal, isCu
         circle( (screen_x, screen_y), 0.1*GRID_SIZE, outlineColor=LOCATION_COLOR, fillColor=LOCATION_COLOR )
 
     if not isObstacle:
-        text( (screen_x, screen_y), text_color, valStr, "Courier", -30, "bold", "c")
+        text( (screen_x, screen_y), text_color, valStr, "Courier", -10, "bold", "c")
 
 
 def drawSquareQ(x, y, qVals, minVal, maxVal, valStrs, bestActions, isCurrent):
@@ -304,7 +304,7 @@ def drawSquareQ(x, y, qVals, minVal, maxVal, valStrs, bestActions, isCurrent):
         valStr = ""
         if action in valStrs:
             valStr = valStrs[action]
-        h = -20
+        h = -10
         if action == 'north':
             #polygon( (center, nw, ne), wedge_color, filled = 1, smooth = 0)
             text(n, text_color, valStr, "Courier", h, "bold", "n")
