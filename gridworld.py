@@ -303,12 +303,16 @@ def getBookGrid():
             ['S',' ',' ',' ']]
     return Gridworld(grid)
 
-def getLargeSquareRingGrid(l=30, w=30, w2=5):
+def getBigGrid(l=10, w=10, w2=2):
     grid = [] 
     for i in range(l):
         row = []
-        if i < w2 or i > l - w2:
+        if i < w2:
             row.extend([' '] * w)
+        elif i > l - w2:
+            row.extend([' '] * w)
+            row[w2] = '#'
+            row[w - w2 - 1] = '#'
         else:
             if i == l/2:
                 row = ['S']
@@ -430,7 +434,7 @@ def parseOptions():
                          help='Request a window width of X pixels *per grid cell* (default %default)')
     optParser.add_option('-a', '--agent',action='store', metavar="A",
                          type='string',dest='agent',default="random",
-                         help='Agent type (options are \'random\', \'value\' and \'q\', default %default)')
+                         help='Agent type (options are \'random\', \'value\', \'rtdp\', and \'q\', default %default)')
     optParser.add_option('-t', '--text',action='store_true',
                          dest='textDisplay',default=False,
                          help='Use text-only ASCII display')
@@ -501,10 +505,12 @@ if __name__ == '__main__':
     # GET THE AGENT
     ###########################
 
-    import valueIterationAgents, qlearningAgents
+    import valueIterationAgents, qlearningAgents, rtdpAgents
     a = None
     if opts.agent == 'value':
         a = valueIterationAgents.ValueIterationAgent(mdp, opts.discount, opts.iters)
+    elif opts.agent == "rtdp":
+        a = rtdpAgents.RTDPAgent(mdp, opts.discount, opts.iters)
     elif opts.agent == 'q':
         #env.getPossibleActions, opts.discount, opts.learningRate, opts.epsilon
         #simulationFn = lambda agent, state: simulation.GridworldSimulation(agent,state,mdp)
