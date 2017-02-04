@@ -28,6 +28,7 @@ class Gridworld(mdp.MarkovDecisionProcess):
         if type(grid) == type([]): grid = makeGrid(grid)
         self.grid = grid
 
+        self.setGoalState()
         # parameters
         self.livingReward = 0.0
         self.noise = 0.2
@@ -92,6 +93,37 @@ class Gridworld(mdp.MarkovDecisionProcess):
         if type(cell) == int or type(cell) == float:
             return cell
         return self.livingReward
+
+    def setGoalState(self):
+        """
+        Set the exit state with the highest reward as the goal state.
+        """
+        max_state = None
+        max_val = -1 * float("inf")
+        for state in self.getStates():
+            if self.isTerminal(state):
+                continue
+            x, y = state
+            cell = self.grid[x][y]
+            if type(cell) == int or type(cell) == float:
+                if cell > max_val:
+                    max_val = cell
+                    max_state = state
+        assert max_state is not None
+        self.goalState = max_state
+        self.goalReward = max_val
+
+    def getGoalState(self):
+        """
+        Return the exit state with the highest reward.
+        """
+        return self.goalState
+
+    def getGoalReward(self):
+        """
+        Return the reward of the exit state with the highest reward.
+        """
+        return self.goalReward
 
     def getStartState(self):
         for x in range(self.grid.width):
@@ -303,30 +335,15 @@ def getBookGrid():
             ['S',' ',' ',' ']]
     return Gridworld(grid)
 
-def getBigGrid(l=10, w=10, w2=2):
+def getBigGrid():
     grid = [] 
-    for i in range(l):
-        row = []
-        if i < w2:
-            row.extend([' '] * w)
-        elif i > l - w2:
-            row.extend([' '] * w)
-            row[w2] = '#'
-            row[w - w2 - 1] = '#'
-        else:
-            if i == l/2:
-                row = ['S']
-                row.extend([' '] * (w2 - 1))
-                # assume w > 2 * w2
-                row.extend(['#'] * (w - 2 * w2))
-                row.extend([' '] * (w2 - 1))
-                row.append(100)
-            else:
-                row.extend([' '] * (w2))
-                # assume w > 2 * w2
-                row.extend(['#'] * (w - 2 * w2))
-                row.extend([' '] * (w2))
-        grid.append(row)
+    for _ in range(15):
+        grid.append([' ',' ',' ',' ',' ',' ',' ',' ',' ',' '])
+    grid.extend([[' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+            [' ','#',' ',' ',' ',' ',' ',' ',' ',' '],
+            [' ','#', 1,'#', 10,' ',' ',' ',' ',' '],
+            ['S',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+            [-10,-10, -10, -10, -10,' ',' ',' ',' ',' ']])
     return Gridworld(grid)
 
 def getMazeGrid():
@@ -336,7 +353,6 @@ def getMazeGrid():
             [' ','#','#',' '],
             ['S',' ',' ',' ']]
     return Gridworld(grid)
-
 
 
 def getUserAction(state, actionFunction):
