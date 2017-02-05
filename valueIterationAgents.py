@@ -16,6 +16,7 @@ import mdp, util
 
 from learningAgents import ValueEstimationAgent
 from itertools import izip
+import time
 
 
 class ValueIterationAgent(ValueEstimationAgent):
@@ -53,6 +54,7 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         #run for specified amount of iterations
         i = 0
+        start_time = time.time()
         while i < iterations:
             #go over all possible states
             for s in states:
@@ -72,6 +74,8 @@ class ValueIterationAgent(ValueEstimationAgent):
 
             self.values = self.nextValues.copy()
             i += 1
+        elapsed_time = time.time() - start_time
+        print ('Planning Time: {}'.format(elapsed_time))
 
     def getValue(self, state):
         """
