@@ -21,14 +21,6 @@ if __name__ == "__main__":
     import sys
     import subprocess as sp
 
-    """
-    log_filename = sys.argv[1]
-    with open(log_filename, 'r') as f:
-        log_dict = json.loads(f.read())
-    log = Log(log_dict['time_list'], log_dict['value_list'])
-    log.draw()
-    """
-
     max_iter = int(sys.argv[1]) # max for -i
     num_play = sys.argv[2] # -k: number of simulating the computed policy
     algorithm = sys.argv[3] # -a

@@ -16,6 +16,7 @@
 import time
 import random
 import mdp, util
+import draw_util # log
 
 from learningAgents import ValueEstimationAgent
 
