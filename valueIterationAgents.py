@@ -87,10 +87,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         q_val = 0
         successors = self.mdp.getTransitionStatesAndProbs(state, action)
-        #print action
         for succ in successors:
             nextState, prob = succ[0], succ[1]
-            #print nextState, prob, self.mdp.getReward(state, action, nextState), self.discount, self.getValue(nextState)
             q_val += prob*(self.mdp.getReward(state, action, nextState) + self.discount*self.getValue(nextState))
 
         return q_val
@@ -104,7 +102,6 @@ class ValueIterationAgent(ValueEstimationAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return None.
         """
-        #actions = mdp.getPossibleActions(state)
         if self.mdp.isTerminal(state):
             return None
 
