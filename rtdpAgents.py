@@ -16,7 +16,6 @@
 import time
 import random
 import mdp, util
-import draw_util # log
 
 from learningAgents import ValueEstimationAgent
 
@@ -54,12 +53,9 @@ class RTDPAgent(ValueEstimationAgent):
         # Write rtdp code here
         start_state = mdp.getStartState()
         start_time = time.time() #log
-        log = draw_util.Log()   # log
         for i in range(iterations):
             self.RTDPTrialReverse(start_state)
-            log.update(time.time() - start_time, self.getValue(start_state))
-        log.dump('rtdp_reverse_h0_log.json') # log
-        #log.draw() # log
+        print('PLANNING TIME: %f' % (time.time() - start_time))
 
     def RTDPTrialReverse(self, state):
         stack = util.Stack()
