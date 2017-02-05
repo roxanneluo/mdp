@@ -53,17 +53,29 @@ class RTDPAgent(ValueEstimationAgent):
         start_state = mdp.getStartState()
         for i in range(iterations):
             print(i)
-            self.RTDPTrial(start_state)
+            self.RTDPTrialReverse(start_state)
+
+    def RTDPTrialReverse(self, state):
+        stack = util.Stack()
+        while not self.mdp.isTerminal(state):
+            action = self.computeActionFromValues(state)
+            assert action is not None
+            #print(state, action)
+            stack.push((state, action))
+            state = self.pickNextState(state, action)
+
+        while not stack.isEmpty():
+            state, action = stack.pop()
+            self.updateValue(state, action)
+
 
     def RTDPTrial(self, state):
         while not self.mdp.isTerminal(state):
-            #print(state)
             action = self.computeActionFromValues(state)
             # actually, I want to reuse the qvalues computed above 
             self.updateValue(state, action)
-            if action is None:
-                print('reach a state with no viable action')
-                return
+            assert action is not None
+            #print(state, self.values[state])
             state = self.pickNextState(state, action)
     
     def pickNextState(self, state, action):
@@ -81,8 +93,7 @@ class RTDPAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         if action is None:
-            if state not in self.values:
-                self.values[state] = self.getValue(state)
+            self.values[state] = self.getValue(state)
             return
         value = self.computeQValueFromValues(state, action)
         self.values[state] = value 
@@ -93,6 +104,7 @@ class RTDPAgent(ValueEstimationAgent):
           Return the heuristic value of state.
         """
         "*** YOUR CODE HERE ***"
+        #return 0
         mdp = self.mdp
         if mdp.isTerminal(state):
             return 0
@@ -144,12 +156,16 @@ class RTDPAgent(ValueEstimationAgent):
         if len(action_list) == 0 or self.mdp.isTerminal(state):
             return None 
 
-        best_action, best_qv = None, -float("inf")
+        best_qv = -float("inf")
+        best_actions = []
         for action in action_list:
             qv = self.computeQValueFromValues(state, action)
-            if qv > best_qv:
-                best_qv, best_action = qv, action
-        return best_action 
+            if qv >= best_qv:
+                if qv > best_qv:
+                    best_actions = []
+                best_qv = qv
+                best_actions.append(action)
+        return random.choice(best_actions) 
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)

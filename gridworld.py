@@ -588,6 +588,7 @@ if __name__ == '__main__':
             if opts.agent == 'random': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
             if opts.agent == 'value': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
             if opts.agent == 'q': displayCallback = lambda state: display.displayQValues(a, state, "CURRENT Q-VALUES")
+            if opts.agent == 'rtdp': displayCallback = lambda state: display.displayValues(a, state, "CURRENT VALUES")
 
     messageCallback = lambda x: printString(x)
     if opts.quiet:
