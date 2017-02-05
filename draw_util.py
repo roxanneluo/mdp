@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     reward_split_str = 'AVERAGE RETURNS FROM START STATE:' 
     time_split_str = 'PLANNING TIME:'
-    iter_start, iter_step = 0, 10
+    iter_start, iter_step = 50, 50 
     cmd = ['python', 'gridworld.py','-t', 
             '-g', 'BigGrid', '-q', '-w', '35',
             '-a', algorithm, '-k', num_play,
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     log = Log()
     for num_iter in range(iter_start, max_iter, iter_step):
         cmd[-1] = str(num_iter)
+        print cmd
         result = sp.check_output(cmd).split('\n')
         print(num_iter, result)
         # assume the time print is always in line 0 and reward print in line[-1]
