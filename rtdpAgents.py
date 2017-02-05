@@ -50,14 +50,41 @@ class RTDPAgent(ValueEstimationAgent):
         self.values = {}  # note, we use a normal python dictionary for RTDPAgent.
 
         # Write rtdp code here
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        start_state = mdp.getStartState()
+        for i in range(iterations):
+            print(i)
+            self.RTDPTrialReverse(start_state)
+
+    def RTDPTrialReverse(self, state):
+        stack = util.Stack()
+        while not self.mdp.isTerminal(state):
+            action = self.computeActionFromValues(state)
+            assert action is not None
+            #print(state, action)
+            stack.push((state, action))
+            state = self.pickNextState(state, action)
+
+        while not stack.isEmpty():
+            state, action = stack.pop()
+            self.updateValue(state, action)
+
+
+    def RTDPTrial(self, state):
+        while not self.mdp.isTerminal(state):
+            action = self.computeActionFromValues(state)
+            # actually, I want to reuse the qvalues computed above 
+            self.updateValue(state, action)
+            assert action is not None
+            #print(state, self.values[state])
+            state = self.pickNextState(state, action)
     
     def pickNextState(self, state, action):
         """
           Return the next stochastically simulated state.
         """
         "*** YOUR CODE HERE ***"
+        next_states_probs = self.mdp.getTransitionStatesAndProbs(state, action)
+        return weighted_choice(next_states_probs)
         util.raiseNotDefined()
 
     def updateValue(self, state, action):
@@ -65,15 +92,28 @@ class RTDPAgent(ValueEstimationAgent):
           Update the value of given state.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if action is None:
+            self.values[state] = self.getValue(state)
+            return
+        value = self.computeQValueFromValues(state, action)
+        self.values[state] = value 
+
 
     def getHeuristicValue(self, state):
         """
           Return the heuristic value of state.
         """
         "*** YOUR CODE HERE ***"
-        # your heuristic function here
-        util.raiseNotDefined()
+        #return 0
+        mdp = self.mdp
+        if mdp.isTerminal(state):
+            return 0
+
+        goal_state = mdp.getGoalState()
+        goal_reward = mdp.getGoalReward()
+        dist = util.manhattanDistance(state, goal_state)
+        return self.discount**(dist - 1) * goal_reward
+
 
     def getValue(self, state):
         """
@@ -94,7 +134,13 @@ class RTDPAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        assert(action is not None)
+        qv = 0
+        mdp = self.mdp
+        for next_state, prob in mdp.getTransitionStatesAndProbs(state, action):
+            qv += prob*(mdp.getReward(state, action, next_state) + \
+                    self.discount * self.getValue(next_state))
+        return qv
 
     def computeActionFromValues(self, state):
         """
@@ -106,7 +152,20 @@ class RTDPAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        action_list = self.mdp.getPossibleActions(state)
+        if len(action_list) == 0 or self.mdp.isTerminal(state):
+            return None 
+
+        best_qv = -float("inf")
+        best_actions = []
+        for action in action_list:
+            qv = self.computeQValueFromValues(state, action)
+            if qv >= best_qv:
+                if qv > best_qv:
+                    best_actions = []
+                best_qv = qv
+                best_actions.append(action)
+        return random.choice(best_actions) 
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
