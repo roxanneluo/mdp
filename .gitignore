@@ -1,1 +1,3 @@
 *.pyc
+figs/*
+*.json
