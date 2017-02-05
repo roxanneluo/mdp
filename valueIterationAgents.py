@@ -75,7 +75,7 @@ class ValueIterationAgent(ValueEstimationAgent):
             self.values = self.nextValues.copy()
             i += 1
         elapsed_time = time.time() - start_time
-        print ('Planning Time: {}'.format(elapsed_time))
+        print ('PLANNING TIME:: {}'.format(elapsed_time))
 
     def getValue(self, state):
         """
