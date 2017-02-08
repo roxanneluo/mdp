@@ -54,9 +54,35 @@ class RTDPAgent(ValueEstimationAgent):
         # Write rtdp code here
         start_state = mdp.getStartState()
         start_time = time.time() #log
+        self.setGoalStatesAndRewards()
+        #print("precondition time:%f" % (time.time() - start_time))
         for i in range(iterations):
+            #print(i)
             self.RTDPTrialReverse(start_state)
         print('PLANNING TIME: %f' % (time.time() - start_time))
+
+    # Assume there exists the goal states with non-negative rewards
+    def setGoalStatesAndRewards(self):
+        mdp = self.mdp
+        self.goal_states_and_rewards = [] 
+        max_goal_reward = -float("inf")
+        for state in mdp.getStates():
+            action_list = mdp.getPossibleActions(state)
+            if len(action_list) == 1 and action_list[0] == 'exit':
+                action = action_list[0]
+                next_states_probs_list = mdp.getTransitionStatesAndProbs(
+                        state, action_list[0]) 
+                assert(len(next_states_probs_list) == 1)
+                next_state, prob = next_states_probs_list[0]
+                assert(mdp.isTerminal(next_state) and prob >= 1)
+                goal_reward = mdp.getReward(state, action, next_state)
+                if goal_reward >= 0:
+                    max_goal_reward = max(goal_reward, max_goal_reward)
+                    self.goal_states_and_rewards.append((state, goal_reward))
+        assert(max_goal_reward >= 0)
+        #print self.goal_states_and_rewards, len(self.goal_states_and_rewards)
+
+
 
     def RTDPTrialReverse(self, state):
         stack = util.Stack()
@@ -110,11 +136,18 @@ class RTDPAgent(ValueEstimationAgent):
         mdp = self.mdp
         if mdp.isTerminal(state):
             return 0
-
+        """
         goal_state = mdp.getGoalState()
         goal_reward = mdp.getGoalReward()
         dist = util.manhattanDistance(state, goal_state)
         return self.discount**(dist - 1) * goal_reward
+        """
+        max_discounted_reward = -float("inf")
+        for goal_state, goal_reward in self.goal_states_and_rewards:
+            dist = util.manhattanDistance(state, goal_state)
+            max_discounted_reward = max(max_discounted_reward,
+                    self.discount**(dist-1) * goal_reward)
+        return max_discounted_reward
 
 
     def getValue(self, state):
